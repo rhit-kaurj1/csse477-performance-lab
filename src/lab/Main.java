@@ -3,6 +3,8 @@ package lab;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import secret.EvilBusinessLogic;
 import secret.Request;
 import secret.Server;
@@ -16,11 +18,11 @@ public class Main {
 			System.err.println("Failed to bind to socket");
 			System.exit(1);
 		}
+		ExecutorService pool = Executors.newFixedThreadPool(4);
 		while (true) {
 			try {
 				Request request = server.acceptConnection();
-				Thread worker = new Thread(() -> handleRequest(request));
-				worker.start();
+				pool.execute(() -> handleRequest(request));
 			} catch (IOException e) {
 				System.err.println("Error accepting request");
 				e.printStackTrace();
