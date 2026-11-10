@@ -3,10 +3,9 @@ package lab;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-
-import secret.Server;
 import secret.EvilBusinessLogic;
 import secret.Request;
+import secret.Server;
 
 public class Main {
 	public static void main(String[] args) {
@@ -20,8 +19,8 @@ public class Main {
 		while (true) {
 			try {
 				Request request = server.acceptConnection();
-				handleRequest(request);
-
+				Thread worker = new Thread(() -> handleRequest(request));
+				worker.start();
 			} catch (IOException e) {
 				System.err.println("Error accepting request");
 				e.printStackTrace();
